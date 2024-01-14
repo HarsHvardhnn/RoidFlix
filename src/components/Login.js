@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useDebugValue } from "react";
 import Header from "./Header";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import ValidateData from "../utils/Validate";
 import validateData from "../utils/Validate";
-import { createUserWithEmailAndPassword ,signInWithEmailAndPassword} from 'firebase/auth'
+import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword ,signInWithEmailAndPassword, updateProfile} from 'firebase/auth'
 import auth from '../utils/firebase';
-
+import { UseDispatch, useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 const Login = () => { 
+  const navigate = useNavigate();
   const [signIn, setSignIn] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError ,setFormError] = useState('');
+  const [name,setName]  = useState('');
+  const dispatch = useDispatch();
+  // const [signedIn, setSignedIn] = useState(false);
 
   const checkForm = () => {
     setFormError(ValidateData(email,password));
@@ -21,7 +27,22 @@ const Login = () => {
           createUserWithEmailAndPassword(auth, email,password)
           .then((userCredential) => {
             const user = userCredential.user;
+            updateProfile(user,{
+              displayName:name
+            }).then(()=>{ 
+              const {uid,email,displayName} = auth.currentUser;
+              dispatch(addUser({uid:uid,email:email ,displayName:displayName}));
+             
+              navigate('/browse');
+
+            }).catch((err) => {
+              console.log(err);
+            })
             console.log(user);
+        
+
+          // setSignedIn(true);
+
           })
           .catch((error) => {
             
@@ -35,7 +56,9 @@ const Login = () => {
   .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
-    console.log(user)
+    console.log(user);
+    navigate('/browse');
+    // setSignedIn(true);
     // ...
   })
   .catch((error) => {
@@ -69,8 +92,10 @@ const Login = () => {
           placeholder="email"
           className="p-2 m-2 w-full bg-gray-800"
         ></input>
-        {signIn && (
-          <input
+        {!signIn && (
+          <input onChange={(e)=>{
+            setName(e.target.value);
+          }}
             type="text"
             placeholder="name"
             className="p-2 m-2 w-full bg-gray-800"
