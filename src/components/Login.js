@@ -33,7 +33,7 @@ const Login = () => {
               const {uid,email,displayName} = auth.currentUser;
               dispatch(addUser({uid:uid,email:email ,displayName:displayName}));
              
-              navigate('/browse');
+              // navigate('/browse');
 
             }).catch((err) => {
               console.log(err);
@@ -57,7 +57,7 @@ const Login = () => {
     // Signed in 
     const user = userCredential.user;
     console.log(user);
-    navigate('/browse');
+    // navigate('/browse');
     // setSignedIn(true);
     // ...
   })
