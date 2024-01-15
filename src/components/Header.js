@@ -9,7 +9,9 @@ import { useEffect } from "react";
 import { addUser, removeUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
 
-const Header = () => {
+const Header = () => { 
+
+  
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
